@@ -27,19 +27,12 @@ function formatMarkdownBlock(text, collapsible) {
   if (collapsible) {
 return `<details><summary>Expand</summary>
 <br>
-
-//\`\`\`
-//${text}
 text
-//\`\`\`
 </details>
 `
   } else {
 return ` 
-// `\`\`\`
-//${text}
 text
-//\`\`\`
 `
   }
 }
