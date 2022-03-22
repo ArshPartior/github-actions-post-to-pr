@@ -81,6 +81,7 @@ async function getPrMessageBlock(octokit, run, definition) {
 
     for (const branch of definition["compare_branches"]) {
         message += `## Previous ${branch} branch:\n\n`;
+        message += `### Testing`;
 
         const data = await readArchivedFile(octokit, run, branch,
                                     definition.artifact_name,
