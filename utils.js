@@ -6,20 +6,40 @@ const core = require('@actions/core');
 const artifact = require('@actions/artifact');
 
 
+#function formatMarkdownBlock(text, collapsible) {
+ # if (collapsible) {
+#return `<details><summary>Expand</summary>
+#<br>
+#
+#\`\`\`
+#${text}
+#\`\`\`
+#</details>
+#`
+ # } else {
+#return `\`\`\`
+#${text}
+#\`\`\`
+#`
+ # }
+#}
 function formatMarkdownBlock(text, collapsible) {
   if (collapsible) {
 return `<details><summary>Expand</summary>
 <br>
 
-\`\`\`
-${text}
-\`\`\`
+#\`\`\`
+#${text}
+text
+#\`\`\`
 </details>
 `
   } else {
-return `\`\`\`
-${text}
-\`\`\`
+return ` 
+# `\`\`\`
+#${text}
+text
+#\`\`\`
 `
   }
 }
