@@ -5623,7 +5623,7 @@ const core = __webpack_require__(470);
 const artifact = __webpack_require__(214);
 
 
-function formatMarkdownBlock(text, collapsible) {
+/*function formatMarkdownBlock(text, collapsible) {
   if (collapsible) {
 return `<details><summary>Expand</summary>
 <br>
@@ -5637,6 +5637,21 @@ ${text}
 return `\`\`\`
 ${text}
 \`\`\`
+`
+  }
+}*/
+	
+function formatMarkdownBlock(text, collapsible) {
+  if (collapsible) {
+return `<details><summary>Expand</summary>
+<br>
+
+text
+</details>
+`
+  } else {
+return `
+text
 `
   }
 }
