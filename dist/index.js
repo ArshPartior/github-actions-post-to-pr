@@ -14562,7 +14562,7 @@ async function getMessageBlock(octokit, run, definition) {
                                     definition.modifier)
         
         oldFile = data;
-        );
+  
     }
 
     message += "\n## Delta File:\n\n";
