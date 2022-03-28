@@ -14554,7 +14554,6 @@ async function getMessageBlock(octokit, run, definition) {
     message += "# " + definition["title"] + "\n";
 
     for (const branch of definition["compare_branches"]) {
-        message += `## Previous ${branch} branch:\n\n`;
 
         const data = await readArchivedFile(octokit, run, branch,
                                     definition.artifact_name,
@@ -14572,7 +14571,7 @@ async function getMessageBlock(octokit, run, definition) {
     console.log("Old file length",oldFile.length);
     if (oldFile.length>12 && newFile.length>0) {
     diffMessage = deltaFile(oldFile,newFile);
-    message += "\n## Delta File:\n\n";
+    message += "\n## Delta Report:\n\n";
     message += utils.formatMarkdownBlock(
              diffMessage,
              definition.collapsible
