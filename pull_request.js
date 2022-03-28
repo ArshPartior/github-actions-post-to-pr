@@ -132,11 +132,13 @@ async function getMessageBlock(octokit, run, definition) {
     
     newFile = dataNew;
     
+    if (oldFile.length>0 && newFile.length>0) {
     diffMessage = deltaFile(oldFile,newFile);
     message += utils.formatMarkdownBlock(
              diffMessage,
              definition.collapsible
     );
+    }
     message += "\n## Full Scan Report:\n\n";
     message += utils.formatMarkdownBlock(
                 utils.applyMessageModifier(newFile, definition["modifier"]),
