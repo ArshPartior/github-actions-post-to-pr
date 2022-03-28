@@ -14570,7 +14570,7 @@ async function getMessageBlock(octokit, run, definition) {
     newFile = data;
     console.log("Old File", oldFile);
     console.log("Old file length",oldFile.length);
-    if (oldFile.length>0 && newFile.length>0) {
+    if (oldFile.length>12 && newFile.length>0) {
     diffMessage = deltaFile(oldFile,newFile);
     message += "\n## Delta File:\n\n";
     message += utils.formatMarkdownBlock(
