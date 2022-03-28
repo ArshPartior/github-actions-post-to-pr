@@ -117,20 +117,20 @@ async function getMessageBlock(octokit, run, definition) {
     for (const branch of definition["compare_branches"]) {
         message += `## Previous ${branch} branch:\n\n`;
 
-        const data = await readArchivedFile(octokit, run, branch,
+        const dataOld = await readArchivedFile(octokit, run, branch,
                                     definition.artifact_name,
                                     definition.message_file,
                                     definition.modifier)
         
-        oldFile = data;
+        oldFile = dataOld;
         );
     }
 
     message += "\n## Delta File:\n\n";
 
-    const data = fs.readFileSync(definition["message_file"], 'utf8')
+    const dataNew = fs.readFileSync(definition["message_file"], 'utf8')
     
-    newFile = data;
+    newFile = dataNew;
     
     diffMessage = deltaFile(oldFile,newFile);
     message += utils.formatMarkdownBlock(
