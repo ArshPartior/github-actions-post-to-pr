@@ -14565,13 +14565,14 @@ async function getMessageBlock(octokit, run, definition) {
   
     }
 
-    message += "\n## Delta File:\n\n";
-
     const data = fs.readFileSync(definition["message_file"], 'utf8')
     
     newFile = data;
+    console.log("Old File", oldFile);
+    console.log("Old file length",oldFile.length);
     if (oldFile.length>0 && newFile.length>0) {
     diffMessage = deltaFile(oldFile,newFile);
+    message += "\n## Delta File:\n\n";
     message += utils.formatMarkdownBlock(
              diffMessage,
              definition.collapsible
