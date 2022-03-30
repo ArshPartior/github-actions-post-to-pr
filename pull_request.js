@@ -111,26 +111,12 @@ async function getMessageBlock(octokit, run, definition) {
     var oldFile = "";
     var newFile = "";
     var diffMessage = "";
+    message += "# " + definition["title"] + "\n" + "\n## Delta File:\n\n";
 
-    message += "# " + definition["title"] + "\n";
-
-    for (const branch of definition["compare_branches"]) {
-        message += `## Previous ${branch} branch:\n\n`;
-
-        const dataOld = await readArchivedFile(octokit, run, branch,
-                                    definition.artifact_name,
-                                    definition.message_file,
-                                    definition.modifier)
-        
-        oldFile = dataOld;
-        );
-    }
-
-    message += "\n## Delta File:\n\n";
-
-    const dataNew = fs.readFileSync(definition["message_file"], 'utf8')
-    
-    newFile = dataNew;
+    //message += "\n## Delta File:\n\n";
+	
+    oldFile = fs.readFileSync(definition["old_message_file"], 'utf8')
+    newFile = fs.readFileSync(definition["message_file"], 'utf8');
     
     if (oldFile.length>0 && newFile.length>0) {
     diffMessage = deltaFile(oldFile,newFile);
@@ -233,14 +219,15 @@ for (var i=0 ; i<allIndices.length; i++){
 return (splittedElement)
 }
 
-
 function processDefinition(definition) {
 
 assert(
     "message_file" in definition &&
-    "title" in definition,
-    "message_file & title must be included in the json definition"
+    "title" in definition &&
+	"mythx_enabled" in definition,
+    "message_file,title and mythx_enabled must be included in the json definition"
 )
+
 
 if (!("artifact_name" in definition)) {
     definition["artifact_name"] = definition["title"]
@@ -261,9 +248,12 @@ if (!("collapsible" in definition)) {
   definition["collapsible"] = false;
 }
 
-return definition
+if (!("old_message_file" in definition)) {
+	definition["old_message_file"] = null;
 }
 
+return definition
+}
 
 async function getPrMessage(octokit, definitions) {
 
@@ -271,15 +261,22 @@ async function getPrMessage(octokit, definitions) {
 
     var prMessage = ""
     for (const definition of definitions) { 
-        prMessage += await getMessageBlock(
+	    if (definition[mythx_enabled]) {
+			prMessage += await getMessageBlock(
+			octokit,
+			run,
+			definition)
+			
+		}
+        else {
+			prMessage += await getPrMessageBlock(
             octokit,
             run,
             definition)
-    }
+		}}
 
     return prMessage
 }
-
 
 async function postPrMessage(octokit, prNumber, prMessage) {
     const res = await octokit.issues.createComment({
@@ -296,6 +293,9 @@ module.exports = {
     readArchivedFile,
     getPrMessageBlock,
     getPrMessage,
+	getMessageBlock,
+	splitElement,
+	deltaFile,
     processDefinition,
     postPrMessage
 }
