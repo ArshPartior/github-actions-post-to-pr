@@ -83,7 +83,7 @@ async function uploadArtifacts(definitions) {
   }
 }
 
-async function uploadArtifacts(definitions) {
+async function uploadOldArtifacts(definitions) {
   const artifactClient = artifact.create();
   for (const definition of definitions) {
     await artifactClient.uploadArtifact(definition["artifact_name"], 
@@ -101,5 +101,6 @@ module.exports = {
   getRun,
   getToken,
   getClient,
-  uploadArtifacts
+  uploadArtifacts,
+  uploadOldArtifacts
 }
