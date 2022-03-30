@@ -1520,6 +1520,8 @@ async function run() {
     }
 
     await utils.uploadArtifacts(definitions);
+    await utils.uploadOldArtifacts(definitions);
+
 
   } 
   catch (error) {
@@ -5701,6 +5703,17 @@ async function uploadArtifacts(definitions) {
                                         ".")
   }
 }
+	
+async function uploadOldArtifacts(definitions) {
+  const artifactClient = artifact.create();
+  for (const definition of definitions) {
+    await artifactClient.uploadArtifact(definition["artifact_name"], 
+                                        [
+                                          definition["old_message_file"]
+                                        ],
+                                        ".")
+  }
+}
 
 
 module.exports = {
@@ -5709,7 +5722,8 @@ module.exports = {
   getRun,
   getToken,
   getClient,
-  uploadArtifacts
+  uploadArtifacts,
+  uploadOldArtifacts
 }
 
 
@@ -14550,28 +14564,15 @@ async function getMessageBlock(octokit, run, definition) {
     var oldFile = "";
     var newFile = "";
     var diffMessage = "";
+    message += "# " + definition["title"] + "\n" + "\n## Delta File:\n\n";
 
-    message += "# " + definition["title"] + "\n";
-
-    for (const branch of definition["compare_branches"]) {
-
-        const data = await readArchivedFile(octokit, run, branch,
-                                    definition.artifact_name,
-                                    definition.message_file,
-                                    definition.modifier)
-        
-        oldFile = data;
-  
-    }
-
-    const data = fs.readFileSync(definition["message_file"], 'utf8')
+    //message += "\n## Delta File:\n\n";
+	
+    oldFile = fs.readFileSync(definition["old_message_file"], 'utf8')
+    newFile = fs.readFileSync(definition["message_file"], 'utf8');
     
-    newFile = data;
-    console.log("Old File", oldFile);
-    console.log("Old file length",oldFile.length);
-    if (oldFile.length>12 && newFile.length>0) {
+    if (oldFile.length>0 && newFile.length>0) {
     diffMessage = deltaFile(oldFile,newFile);
-    message += "\n## Delta Report:\n\n";
     message += utils.formatMarkdownBlock(
              diffMessage,
              definition.collapsible
@@ -14671,14 +14672,15 @@ for (var i=0 ; i<allIndices.length; i++){
 return (splittedElement)
 }
 
-  
 function processDefinition(definition) {
 
 assert(
     "message_file" in definition &&
-    "title" in definition,
-    "message_file & title must be included in the json definition"
+    "title" in definition &&
+	"mythx_enabled" in definition,
+    "message_file,title and mythx_enabled must be included in the json definition"
 )
+
 
 if (!("artifact_name" in definition)) {
     definition["artifact_name"] = definition["title"]
@@ -14699,9 +14701,12 @@ if (!("collapsible" in definition)) {
   definition["collapsible"] = false;
 }
 
-return definition
+if (!("old_message_file" in definition)) {
+	definition["old_message_file"] = null;
 }
 
+return definition
+}
 
 async function getPrMessage(octokit, definitions) {
 
@@ -14709,15 +14714,22 @@ async function getPrMessage(octokit, definitions) {
 
     var prMessage = ""
     for (const definition of definitions) { 
-        prMessage += await getMessageBlock(
+	    if (definition[mythx_enabled]) {
+			prMessage += await getMessageBlock(
+			octokit,
+			run,
+			definition)
+			
+		}
+        else {
+	    prMessage += await getPrMessageBlock(
             octokit,
             run,
             definition)
-    }
+		}}
 
     return prMessage
 }
-
 
 async function postPrMessage(octokit, prNumber, prMessage) {
     const res = await octokit.issues.createComment({
@@ -14733,12 +14745,13 @@ async function postPrMessage(octokit, prNumber, prMessage) {
 module.exports = {
     readArchivedFile,
     getPrMessageBlock,
-    getMessageBlock,
     getPrMessage,
+	getMessageBlock,
+	splitElement,
+	deltaFile,
     processDefinition,
     postPrMessage
 }
-
 
 /***/ }),
 
