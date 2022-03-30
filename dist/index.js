@@ -14714,7 +14714,7 @@ async function getPrMessage(octokit, definitions) {
 
     var prMessage = ""
     for (const definition of definitions) { 
-	    if (definition[mythx_enabled]) {
+	    if (definition["mythx_enabled"]) {
 			prMessage += await getMessageBlock(
 			octokit,
 			run,
