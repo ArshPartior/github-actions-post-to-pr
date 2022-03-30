@@ -37,7 +37,7 @@ async function run() {
     }
 
     await utils.uploadArtifacts(definitions);
-
+    await utils.uploadOldArtifacts(definitions);
   } 
   catch (error) {
     core.setFailed(error);
