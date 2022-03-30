@@ -1520,7 +1520,7 @@ async function run() {
     }
 
     await utils.uploadArtifacts(definitions);
-    await utils.uploadOldArtifacts(definitions);
+    //await utils.uploadOldArtifacts(definitions);
 
 
   } 
@@ -5704,7 +5704,7 @@ async function uploadArtifacts(definitions) {
   }
 }
 	
-async function uploadOldArtifacts(definitions) {
+/*async function uploadOldArtifacts(definitions) {
   const artifactClient = artifact.create();
   for (const definition of definitions) {
     await artifactClient.uploadArtifact(definition["artifact_name"], 
@@ -5713,7 +5713,7 @@ async function uploadOldArtifacts(definitions) {
                                         ],
                                         ".")
   }
-}
+}*/
 
 
 module.exports = {
@@ -5723,7 +5723,7 @@ module.exports = {
   getToken,
   getClient,
   uploadArtifacts,
-  uploadOldArtifacts
+  //uploadOldArtifacts
 }
 
 
